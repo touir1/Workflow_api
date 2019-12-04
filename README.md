@@ -1,2 +1,2 @@
-# Workflow_api
+# workflowApi
 A Java based workflow API
