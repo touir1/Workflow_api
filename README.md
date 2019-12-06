@@ -9,3 +9,5 @@ Functionnalities:
 * types of tasks (TimerTask, DummyTask, AsyncTask, SimpleTask)
 * logging functionnality
 
+Nice to have:
+* scheduler + GUI
