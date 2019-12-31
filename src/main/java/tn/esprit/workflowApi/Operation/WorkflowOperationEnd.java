@@ -1,3 +1,4 @@
+/*
 package tn.esprit.workflowApi.Operation;
 
 import tn.esprit.workflowApi.WorkflowObject;
@@ -17,3 +18,4 @@ public class WorkflowOperationEnd extends WorkflowOperation {
 		super.setFirst(object);
 	}
 }
+*/

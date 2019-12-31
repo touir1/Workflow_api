@@ -1,5 +1,6 @@
 package tn.esprit.workflowApi.Result;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -9,6 +10,7 @@ public class WorkflowTaskResult {
 	
 	private WorkflowStatus status;
 	private List<Object> data;
+	private String message;
 	
 	public WorkflowTaskResult() {
 		super();
@@ -52,6 +54,18 @@ public class WorkflowTaskResult {
 
 	public void setData(List<Object> data) {
 		this.data = data;
+	}
+	
+	public void setData(Object data) {
+		this.data = Arrays.asList(data);
+	}
+	
+	public void setMessage(String message) {
+		this.message = message;
+	}
+	
+	public String getMessage() {
+		return this.message;
 	}
 
 }

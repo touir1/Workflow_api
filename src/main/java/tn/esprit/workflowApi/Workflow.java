@@ -8,11 +8,12 @@ import tn.esprit.workflowApi.Task.WorkflowTaskObject;
 public class Workflow {
 
 	private WorkflowTask startingTask;
-	protected long uniqueID;
+	protected final long uniqueID;
 
 	Workflow() {
 		super();
-
+		
+		this.uniqueID = WorkflowManager.getNextUniqueID();
 	}
 
 	public Iterator<WorkflowTaskObject> createTasksIterator() {
@@ -35,6 +36,10 @@ public class Workflow {
 	
 	WorkflowTask getStartingTask() {
 		return this.startingTask;
+	}
+	
+	public long getUniqueID() {
+		return this.uniqueID;
 	}
 
 }

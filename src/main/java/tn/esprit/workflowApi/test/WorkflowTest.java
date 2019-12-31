@@ -1,12 +1,18 @@
 package tn.esprit.workflowApi.test;
 
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.PrintStream;
 import java.util.Iterator;
+import java.util.List;
 
+import tn.esprit.workflowApi.Log;
 import tn.esprit.workflowApi.Workflow;
 import tn.esprit.workflowApi.WorkflowManager;
 import tn.esprit.workflowApi.WorkflowObject;
+import tn.esprit.workflowApi.WorkflowStatus;
 import tn.esprit.workflowApi.Operation.WorkflowOperation;
-import tn.esprit.workflowApi.Operation.WorkflowOperationEnd;
+//import tn.esprit.workflowApi.Operation.WorkflowOperationEnd;
 import tn.esprit.workflowApi.Operation.WorkflowOperationTimer;
 import tn.esprit.workflowApi.Result.WorkflowTaskResult;
 import tn.esprit.workflowApi.Task.WorkflowDummyTask;
@@ -16,6 +22,18 @@ import tn.esprit.workflowApi.Task.WorkflowTaskObject;
 public class WorkflowTest {
 	
 	public static void main(String[] args) {
+
+		try {
+			FileOutputStream fout = new FileOutputStream("workflow.log");
+			//creating Printstream obj 
+	        PrintStream out=new PrintStream(fout);
+	        Log.addPrintStream(out);
+		} catch (FileNotFoundException e1) {
+			e1.printStackTrace();
+		}
+        
+        
+		
 		WorkflowManager manager = WorkflowManager.getInstance();
 		
 		Workflow w = manager.createWorkflow();
@@ -38,7 +56,10 @@ public class WorkflowTest {
 			public WorkflowTaskResult execute(WorkflowTaskResult lastResult) throws Exception {
 				System.out.println("executing task: "+ this.getUniqueID());
 				//throw new Exception();
-				return null;
+				WorkflowTaskResult result = new WorkflowTaskResult();
+				result.setStatus(WorkflowStatus.SUCCESS);
+				result.setData("testing");
+				return result;
 			}
 		};
 		w.setStartingTask(task);
@@ -48,7 +69,43 @@ public class WorkflowTest {
 		WorkflowDummyTask dummyTask = new WorkflowDummyTask();
 		t.addNext(dummyTask);
 		
-		WorkflowOperationEnd ending = new WorkflowOperationEnd(dummyTask);
+		WorkflowTask task2 = new WorkflowTask() {
+
+			@Override
+			public WorkflowTaskResult execute(WorkflowTaskResult lastResult) throws Exception {
+				
+				//System.out.println("last result");
+				if(lastResult == null || lastResult.getData() == null) System.out.println("no data found");
+				else {
+					System.out.println("last result got data");
+					for(Object o : lastResult.getData()) {
+						System.out.println("data object: " + o);
+					}
+					System.out.println("lastResult status: "+lastResult.getStatus());
+					
+				}
+				
+				WorkflowTaskResult result = new WorkflowTaskResult(WorkflowStatus.SUCCESS,"testing result");
+				
+				return result;
+			}
+
+			@Override
+			public void onSuccess(WorkflowTaskResult result) throws Exception {
+				System.out.println("on success "+this.getUniqueID());
+				System.out.println("data: " + result.getData().get(0));
+				
+			}
+
+			@Override
+			public void onFailure(WorkflowTaskResult result) throws Exception {
+				System.out.println("on failure "+this.getUniqueID());
+				
+			}
+			
+		};
+		t.addNext(task2);
+		//WorkflowOperationEnd ending = new WorkflowOperationEnd(dummyTask);
 		/*
 		System.out.println("hello1");
 		t.startOperation();
@@ -64,9 +121,10 @@ public class WorkflowTest {
 		*/
 		
 		System.out.println("task1: "+task.getUniqueID());
-		System.out.println("task2: "+dummyTask.getUniqueID());
-		System.out.println("timer: "+t.getUniqueID());
-		System.out.println("ending: "+ending.getUniqueID());
+		System.out.println("dummyTask: "+dummyTask.getUniqueID());
+		//System.out.println("timer: "+t.getUniqueID());
+		//System.out.println("ending: "+ending.getUniqueID());
+		System.out.println("task2: "+task2.getUniqueID());
 		
 		System.out.println("iterating over tasks in workflow");
 		for(Iterator<WorkflowTaskObject> i = w.createTasksIterator(); i.hasNext(); ) {

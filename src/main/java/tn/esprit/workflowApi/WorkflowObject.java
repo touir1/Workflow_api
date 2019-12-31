@@ -7,7 +7,7 @@ import java.util.Map;
 
 public class WorkflowObject implements Cloneable {
 	
-	protected long uniqueID;
+	private final long uniqueID;
 	
 	private WorkflowStatus status;
 	

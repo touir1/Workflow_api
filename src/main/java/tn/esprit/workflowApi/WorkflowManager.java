@@ -33,8 +33,9 @@ public class WorkflowManager {
 		// w.startWorkflow();
 
 		WorkflowTaskObject task = w.getStartingTask();
+		Log.info("The workflow "+w.getUniqueID() + " has started");
 		executeTask(task, null);
-
+		Log.info("The workflow "+w.getUniqueID() + " has ended");
 	}
 
 	private synchronized WorkflowTaskResult executeTask(WorkflowTaskObject task, WorkflowTaskResult lastResult) throws Exception {
@@ -55,6 +56,7 @@ public class WorkflowManager {
 							res = task.execute(lastResult);
 						} catch (Exception e) {
 							res = new WorkflowTaskResult(WorkflowStatus.FAILURE, null);
+							res.setMessage(e.getMessage());
 						}
 						
 						if(res == null) {
@@ -70,6 +72,8 @@ public class WorkflowManager {
 				t.start();
 
 				while (task.getStatus().equals(WorkflowStatus.IN_PROGRESS)) {
+					Thread.sleep(1);
+					//Log.info("waiting for "+task.getUniqueID()+" ...");
 				}
 				result = data.get("lastResult");
 				List<WorkflowObject> next = task.getNextList();
@@ -86,6 +90,7 @@ public class WorkflowManager {
 					}
 				} else {
 					Log.error("task " + task.getUniqueID() + " finished with status: " + result.getStatus());
+					if(result.getMessage() != null) Log.error("error message: "+result.getMessage());
 					task.onFailure(result);
 
 					for (WorkflowObject n : next) {
@@ -99,9 +104,11 @@ public class WorkflowManager {
 				task.setStatus(WorkflowStatus.FAILURE);
 				List<WorkflowObject> next = task.getNextList();
 				WorkflowTaskResult errorResult = new WorkflowTaskResult(WorkflowStatus.FAILURE, null);
+				errorResult.setMessage(e.getMessage());
 				Log.error("task " + task.getUniqueID() + " encountered a problem while running.");
-				Log.error(e.getMessage());
-				task.onFailure(null);
+				Log.error("error message: "+e.getMessage());
+				
+				task.onFailure(errorResult);
 			}
 
 		}
@@ -157,13 +164,15 @@ public class WorkflowManager {
 						}
 					}
 				}
-			} else if (operation instanceof WorkflowOperationEnd) {
+			} /*else if (operation instanceof WorkflowOperationEnd) {
 				Log.info("the workflow ended");
-			} else if (operation instanceof WorkflowOperationTimer) {
+			}*/ else if (operation instanceof WorkflowOperationTimer) {
 				WorkflowOperationTimer timer = (WorkflowOperationTimer) operation;
 				Log.info("timerOperation(" + timer.getTime() + ") starting");
 				timer.startOperation();
 				while (!timer.finished()) {
+					Thread.sleep(1);
+					//Log.info("waiting for "+timer.getUniqueID()+" ...");
 				}
 				Log.info("timerOperation(" + timer.getTime() + ") ended");
 				for (WorkflowObject n : timer.getNextList()) {
