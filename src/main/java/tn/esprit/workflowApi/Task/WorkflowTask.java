@@ -4,10 +4,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import tn.esprit.workflowApi.WorkflowObject;
-import tn.esprit.workflowApi.Operation.WorkflowOperationEnd;
 import tn.esprit.workflowApi.Result.WorkflowTaskResult;
 
-public abstract class WorkflowTask implements WorkflowObject {
+public abstract class WorkflowTask extends WorkflowTaskObject {
 
 	private WorkflowTask instance = this;
 	private Map<String, Object> parameters;
@@ -17,67 +16,51 @@ public abstract class WorkflowTask implements WorkflowObject {
 	public WorkflowTask() {
 		super();
 
-		this.onSuccessObject = new WorkflowOperationEnd();
-		this.onFailureObject = new WorkflowOperationEnd();
+		this.parameters = new HashMap<String, Object>();
 	}
 
+	@Override
 	public WorkflowTask clone() {
 		WorkflowTask clone = new WorkflowTask() {
 
 			@Override
-			public WorkflowTaskResult execute() {
-				return instance.execute();
+			public WorkflowTaskResult execute(WorkflowTaskResult lastResult) throws Exception {
+				return instance.execute(lastResult);
 			}
 
 			@Override
-			public void onSuccess() {
-				// TODO on success
+			public void onSuccess(WorkflowTaskResult result) throws Exception {
+				instance.onSuccess(result);
 
 			}
 
 			@Override
-			public void onFailure() {
-				// TODO on failure
+			public void onFailure(WorkflowTaskResult result) throws Exception {
+				instance.onFailure(result);
 
 			}
 
 		};
-		clone.setParameters(this.parameters);
+		clone.setParameters(new HashMap<String,Object>(this.parameters));
+		clone.setOnSuccessObject(this.onSuccessObject);
+		clone.setOnFailureObject(this.onFailureObject);
 
 		return clone;
 	}
 
-	public abstract void onSuccess();
-
-	public abstract void onFailure();
-
-	public abstract WorkflowTaskResult execute();
-
 	public void setParameter(String key, Object value) {
-		if (parameters == null)
-			parameters = new HashMap<String, Object>();
-
 		parameters.put(key, value);
 	}
 
 	public void setParameters(Map<String, Object> parameters) {
-		if (parameters == null)
-			parameters = new HashMap<String, Object>();
-
 		this.parameters.putAll(parameters);
 	}
 
 	public Object removeParameter(String key) {
-		if (parameters == null)
-			parameters = new HashMap<String, Object>();
-
 		return parameters.remove(key);
 	}
 
 	public Object getParameter(String key) {
-		if (parameters == null)
-			parameters = new HashMap<String, Object>();
-
 		return parameters.get(key);
 	}
 

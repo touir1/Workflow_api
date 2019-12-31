@@ -1,13 +1,19 @@
 package tn.esprit.workflowApi.Operation;
 
+import tn.esprit.workflowApi.WorkflowObject;
 import tn.esprit.workflowApi.WorkflowStatus;
 
 public class WorkflowOperationEnd extends WorkflowOperation {
 
-	protected WorkflowStatus status = WorkflowStatus.PENDING;
-
 	@Override
 	public boolean finished() {
-		return this.status.equals(WorkflowStatus.SUCCESS);
+		return this.getStatus().equals(WorkflowStatus.SUCCESS);
+	}
+	
+	public WorkflowOperationEnd(WorkflowObject object) {
+		super();
+		
+		super.setStatus(WorkflowStatus.PENDING);
+		super.setFirst(object);
 	}
 }

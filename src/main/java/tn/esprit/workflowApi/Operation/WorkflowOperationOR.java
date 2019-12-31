@@ -10,8 +10,8 @@ public class WorkflowOperationOR extends WorkflowOperation {
 	public WorkflowOperationOR(WorkflowObject object1, WorkflowObject object2) {
 		super();
 		
-		this.first = object1;
-		this.second = object2;
+		this.setFirst(object1);
+		this.setSecond(object2);
 	}
 
 	@Override
@@ -20,6 +20,51 @@ public class WorkflowOperationOR extends WorkflowOperation {
 				WorkflowStatus.FAILURE,
 				WorkflowStatus.SUCCESS, 
 				WorkflowStatus.INTERRUPTED
-			).contains(this.status);
+			).contains(this.getStatus());
+	}
+	
+	@Override
+	public WorkflowOperationAND clone() {
+		return new WorkflowOperationAND(this.getFirst(), this.getSecond());
+	}
+	
+	@Override
+	public void setFirst(WorkflowObject object) {
+		super.setFirst(object);
+	}
+	
+	@Override
+	public WorkflowObject getFirst() {
+		return super.getFirst();
+	}
+	
+	@Override
+	public void setSecond(WorkflowObject object) {
+		super.setSecond(object);
+	}
+	
+	@Override
+	public WorkflowObject getSecond() {
+		return super.getSecond();
+	}
+	
+	@Override
+	public boolean getFirstFinished() {
+		return super.getFirstFinished();
+	}
+	
+	@Override
+	public boolean getSecondFinished() {
+		return super.getSecondFinished();
+	}
+	
+	@Override
+	public void setFirstFinished(boolean finished) {
+		super.setFirstFinished(finished);
+	}
+	
+	@Override
+	public void setSecondFinished(boolean finished) {
+		super.setSecondFinished(finished);
 	}
 }
