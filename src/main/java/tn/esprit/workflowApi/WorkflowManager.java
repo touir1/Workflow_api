@@ -37,7 +37,7 @@ public class WorkflowManager {
 
 	}
 
-	private WorkflowTaskResult executeTask(WorkflowTaskObject task, WorkflowTaskResult lastResult) throws Exception {
+	private synchronized WorkflowTaskResult executeTask(WorkflowTaskObject task, WorkflowTaskResult lastResult) throws Exception {
 		Log.info("starting task: " + task.getUniqueID());
 
 		Map<String, WorkflowTaskResult> data = new HashMap<String, WorkflowTaskResult>();
@@ -79,9 +79,9 @@ public class WorkflowManager {
 					task.onSuccess(result);
 					for (WorkflowObject n : next) {
 						if (n instanceof WorkflowOperation) {
-							return executeOperation((WorkflowOperation) n, task, result);
+							executeOperation((WorkflowOperation) n, task, result);
 						} else if (n instanceof WorkflowTaskObject) {
-							return executeTask((WorkflowTaskObject) n, result);
+							executeTask((WorkflowTaskObject) n, result);
 						}
 					}
 				} else {
@@ -90,7 +90,7 @@ public class WorkflowManager {
 
 					for (WorkflowObject n : next) {
 						if (n instanceof WorkflowOperationOR) {
-							return executeOperation((WorkflowOperation) n, task, result);
+							executeOperation((WorkflowOperation) n, task, result);
 						}
 					}
 				}
@@ -110,7 +110,7 @@ public class WorkflowManager {
 		// return task.execute(lastResult);
 	}
 
-	private WorkflowTaskResult executeOperation(WorkflowOperation operation, WorkflowObject lastObject,
+	private synchronized WorkflowTaskResult executeOperation(WorkflowOperation operation, WorkflowObject lastObject,
 			WorkflowTaskResult lastResult) {
 		WorkflowTaskResult result = lastResult;
 
@@ -133,7 +133,7 @@ public class WorkflowManager {
 
 						for (WorkflowObject n : op.getNextList()) {
 							if (n instanceof WorkflowOperationOR) {
-								return executeOperation((WorkflowOperation) n, op, op.getResult());
+								executeOperation((WorkflowOperation) n, op, op.getResult());
 							}
 						}
 
@@ -153,7 +153,7 @@ public class WorkflowManager {
 
 					for (WorkflowObject n : operation.getNextList()) {
 						if (n instanceof WorkflowOperationOR) {
-							return executeOperation((WorkflowOperation) n, operation, operation.getResult());
+							executeOperation((WorkflowOperation) n, operation, operation.getResult());
 						}
 					}
 				}
@@ -168,9 +168,9 @@ public class WorkflowManager {
 				Log.info("timerOperation(" + timer.getTime() + ") ended");
 				for (WorkflowObject n : timer.getNextList()) {
 					if (n instanceof WorkflowOperation) {
-						return executeOperation((WorkflowOperation) n, timer, result);
+						executeOperation((WorkflowOperation) n, timer, result);
 					} else if (n instanceof WorkflowTaskObject) {
-						return executeTask((WorkflowTaskObject) n, result);
+						executeTask((WorkflowTaskObject) n, result);
 					}
 				}
 			} else if (operation instanceof WorkflowOperationAND) {
@@ -195,9 +195,9 @@ public class WorkflowManager {
 
 					for (WorkflowObject n : operation.getNextList()) {
 						if (n instanceof WorkflowOperation) {
-							return executeOperation((WorkflowOperation) n, op, op.getResult());
+							executeOperation((WorkflowOperation) n, op, op.getResult());
 						} else if (n instanceof WorkflowTaskObject) {
-							return executeTask((WorkflowTaskObject) n, op.getResult());
+							executeTask((WorkflowTaskObject) n, op.getResult());
 						}
 					}
 				}
@@ -221,9 +221,9 @@ public class WorkflowManager {
 
 				for (WorkflowObject n : operation.getNextList()) {
 					if (n instanceof WorkflowOperation) {
-						return executeOperation((WorkflowOperation) n, op, op.getResult());
+						executeOperation((WorkflowOperation) n, op, op.getResult());
 					} else if (n instanceof WorkflowTaskObject) {
-						return executeTask((WorkflowTaskObject) n, op.getResult());
+						executeTask((WorkflowTaskObject) n, op.getResult());
 					}
 				}
 			}

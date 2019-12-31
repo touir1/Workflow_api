@@ -49,7 +49,7 @@ public class WorkflowTest {
 		t.addNext(dummyTask);
 		
 		WorkflowOperationEnd ending = new WorkflowOperationEnd(dummyTask);
-		
+		/*
 		System.out.println("hello1");
 		t.startOperation();
 		System.out.println("hello2");
@@ -61,7 +61,7 @@ public class WorkflowTest {
 		WorkflowObject obj2 = t;
 		System.out.println("workflowOperation? "+(obj2 instanceof WorkflowOperation));
 		System.out.println("workflowTaskObject? "+(obj2 instanceof WorkflowTaskObject));
-		
+		*/
 		
 		System.out.println("task1: "+task.getUniqueID());
 		System.out.println("task2: "+dummyTask.getUniqueID());
