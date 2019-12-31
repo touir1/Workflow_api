@@ -236,6 +236,22 @@ public class WorkflowManager {
 					}
 				}
 			}
+			else if(operation instanceof WorkflowOperationConditional) {
+				WorkflowOperationConditional op = (WorkflowOperationConditional) operation;
+				op.setPreviousFinished(true);
+				op.setStatus(WorkflowStatus.SUCCESS);
+				op.setResult(result);
+
+				if(op.condition(result)) {
+					for (WorkflowObject n : operation.getNextList()) {
+						if (n instanceof WorkflowOperation) {
+							executeOperation((WorkflowOperation) n, op, op.getResult());
+						} else if (n instanceof WorkflowTaskObject) {
+							executeTask((WorkflowTaskObject) n, op.getResult());
+						}
+					}
+				}
+			}
 		} catch (Exception e) {
 			// operation.setStatus(WorkflowStatus.FAILURE);
 			Log.error("operation " + operation.getUniqueID() + " encountered a problem while running.");
