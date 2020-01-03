@@ -14,8 +14,9 @@ import tn.esprit.workflowApi.WorkflowStatus;
 import tn.esprit.workflowApi.Operation.WorkflowOperationConditional;
 import tn.esprit.workflowApi.Result.WorkflowTaskResult;
 import tn.esprit.workflowApi.Task.WorkflowTask;
+import tn.esprit.workflowApi.Task.WorkflowTaskObject;
 
-public class WorkflowSimpleArithmetic {
+public class WorkflowSimpleArithmeticTest {
 	public static void main(String[] args) {
 		try {
 			FileOutputStream fout = new FileOutputStream("workflow.log");
@@ -36,7 +37,7 @@ public class WorkflowSimpleArithmetic {
 		WorkflowTask splitterTask = new WorkflowTask() {
 
 			@Override
-			public WorkflowTaskResult execute(WorkflowTaskResult lastResult) throws Exception {
+			public WorkflowTaskResult execute(WorkflowTaskResult lastResult, WorkflowTaskObject self) throws Exception {
 				WorkflowTaskResult result = new WorkflowTaskResult();
 				List<Double> numbers = new ArrayList<Double>(); 
 				for(String s : toTest.split("\\*")) {
@@ -51,13 +52,13 @@ public class WorkflowSimpleArithmetic {
 			}
 
 			@Override
-			public void onSuccess(WorkflowTaskResult result) throws Exception {
+			public void onSuccess(WorkflowTaskResult result, WorkflowTaskObject self) throws Exception {
 				// TODO Auto-generated method stub
 				
 			}
 
 			@Override
-			public void onFailure(WorkflowTaskResult result) throws Exception {
+			public void onFailure(WorkflowTaskResult result, WorkflowTaskObject self) throws Exception {
 				// TODO Auto-generated method stub
 				
 			}
@@ -68,7 +69,7 @@ public class WorkflowSimpleArithmetic {
 		WorkflowTask calculator = new WorkflowTask() {
 
 			@Override
-			public WorkflowTaskResult execute(WorkflowTaskResult lastResult) throws Exception {
+			public WorkflowTaskResult execute(WorkflowTaskResult lastResult, WorkflowTaskObject self) throws Exception {
 				List<Double> numbers = (List<Double>) lastResult.getData().get(0);
 				int idx = (int) lastResult.getData().get(1);
 				double result = (double) lastResult.getData().get(2);
@@ -90,13 +91,13 @@ public class WorkflowSimpleArithmetic {
 			}
 
 			@Override
-			public void onSuccess(WorkflowTaskResult result) throws Exception {
+			public void onSuccess(WorkflowTaskResult result, WorkflowTaskObject self) throws Exception {
 				// TODO Auto-generated method stub
 				
 			}
 
 			@Override
-			public void onFailure(WorkflowTaskResult result) throws Exception {
+			public void onFailure(WorkflowTaskResult result, WorkflowTaskObject self) throws Exception {
 				// TODO Auto-generated method stub
 				
 			}
@@ -107,7 +108,7 @@ public class WorkflowSimpleArithmetic {
 		WorkflowOperationConditional startCondition = new WorkflowOperationConditional(calculator) {
 			
 			@Override
-			public boolean condition(WorkflowTaskResult lastResult) {
+			public boolean condition(WorkflowTaskResult lastResult, WorkflowOperationConditional self) {
 				List<Double> numbers = (List<Double>) lastResult.getData().get(0);
 				int idx = (int) lastResult.getData().get(1);
 				return numbers.size() > idx;
@@ -118,20 +119,20 @@ public class WorkflowSimpleArithmetic {
 		WorkflowTask endCalculus = new WorkflowTask() {
 			
 			@Override
-			public WorkflowTaskResult execute(WorkflowTaskResult lastResult) throws Exception {
+			public WorkflowTaskResult execute(WorkflowTaskResult lastResult, WorkflowTaskObject self) throws Exception {
 				calculusResult.setData(lastResult.getData());
 				
 				return null;
 			}
 			
 			@Override
-			public void onSuccess(WorkflowTaskResult result) throws Exception {
+			public void onSuccess(WorkflowTaskResult result, WorkflowTaskObject self) throws Exception {
 				// TODO Auto-generated method stub
 				
 			}
 			
 			@Override
-			public void onFailure(WorkflowTaskResult result) throws Exception {
+			public void onFailure(WorkflowTaskResult result, WorkflowTaskObject self) throws Exception {
 				// TODO Auto-generated method stub
 				
 			}
@@ -140,7 +141,7 @@ public class WorkflowSimpleArithmetic {
 		WorkflowOperationConditional endCondition = new WorkflowOperationConditional(calculator) {
 			
 			@Override
-			public boolean condition(WorkflowTaskResult lastResult) {
+			public boolean condition(WorkflowTaskResult lastResult, WorkflowOperationConditional self) {
 				List<Double> numbers = (List<Double>) lastResult.getData().get(0);
 				int idx = (int) lastResult.getData().get(1);
 				return numbers.size() <= idx;

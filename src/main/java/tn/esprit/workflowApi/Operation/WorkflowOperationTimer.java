@@ -1,5 +1,6 @@
 package tn.esprit.workflowApi.Operation;
 
+import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -16,6 +17,15 @@ public class WorkflowOperationTimer extends WorkflowOperation {
 	 */
 	public WorkflowOperationTimer(WorkflowObject object, long time) {
 		super();
+
+		super.setFirst(object);
+		this.time = time;
+		this.finished = false;
+		
+	}
+	
+	protected WorkflowOperationTimer(WorkflowObject object, long time, Map<String, Object> parameters) {
+		super(parameters);
 
 		super.setFirst(object);
 		this.time = time;
@@ -46,7 +56,7 @@ public class WorkflowOperationTimer extends WorkflowOperation {
 	
 	@Override
 	public WorkflowOperationTimer clone() {
-		return new WorkflowOperationTimer(this.getFirst(), this.time);
+		return new WorkflowOperationTimer(this.getFirst(), this.time, this.parameters);
 	}
 	
 	public void setPrevious(WorkflowObject object) {

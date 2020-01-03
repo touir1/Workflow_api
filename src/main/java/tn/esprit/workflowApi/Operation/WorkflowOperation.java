@@ -1,5 +1,7 @@
 package tn.esprit.workflowApi.Operation;
 
+import java.util.Map;
+
 import tn.esprit.workflowApi.WorkflowObject;
 import tn.esprit.workflowApi.Result.WorkflowTaskResult;
 
@@ -8,6 +10,16 @@ public abstract class WorkflowOperation extends WorkflowObject {
 	private WorkflowObject first,second;
 	private boolean firstFinished, secondFinished;
 	private WorkflowTaskResult result;
+	
+	protected WorkflowOperation() {
+		super();
+		
+	}
+	
+	protected WorkflowOperation(Map<String, Object> parameters) {
+		super(parameters);
+		
+	}
 	
 	public abstract boolean finished();
 	
@@ -54,4 +66,5 @@ public abstract class WorkflowOperation extends WorkflowObject {
 	public WorkflowTaskResult getResult() {
 		return this.result;
 	}
+	
 }

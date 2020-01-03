@@ -17,7 +17,9 @@ public class Log {
 		streams.add(printStream);
 	}
 	
-	
+	public static void clearPrintStream() {
+		streams.clear();
+	}
 	
 	public static void info(String text) {
 		String header = "[INFO] " + ft.format(new Date())+" : ";

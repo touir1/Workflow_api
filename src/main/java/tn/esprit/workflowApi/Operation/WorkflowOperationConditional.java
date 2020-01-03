@@ -1,5 +1,7 @@
 package tn.esprit.workflowApi.Operation;
 
+import java.util.Map;
+
 import tn.esprit.workflowApi.WorkflowObject;
 import tn.esprit.workflowApi.Result.WorkflowTaskResult;
 
@@ -13,7 +15,13 @@ public abstract class WorkflowOperationConditional extends WorkflowOperation {
 		this.setPrevious(previous);
 	}
 	
-	public abstract boolean condition(WorkflowTaskResult lastResult);
+	protected WorkflowOperationConditional(WorkflowObject previous, Map<String, Object> parameters) {
+		super(parameters);
+		
+		this.setPrevious(previous);
+	}
+	
+	public abstract boolean condition(WorkflowTaskResult lastResult, WorkflowOperationConditional self);
 	
 	@Override
 	public boolean finished() {
@@ -38,11 +46,11 @@ public abstract class WorkflowOperationConditional extends WorkflowOperation {
 	
 	@Override
 	public WorkflowOperationConditional clone() {
-		return new WorkflowOperationConditional(this.getPrevious()) {
+		return new WorkflowOperationConditional(this.getPrevious(), this.parameters) {
 
 			@Override
-			public boolean condition(WorkflowTaskResult lastResult) {
-				return instance.condition(lastResult);
+			public boolean condition(WorkflowTaskResult lastResult, WorkflowOperationConditional self) {
+				return instance.condition(lastResult, self);
 			}
 			
 		};

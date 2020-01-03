@@ -12,6 +12,7 @@ public class WorkflowObject implements Cloneable {
 	private WorkflowStatus status;
 	
 	private Map<Long, WorkflowObject> next;
+	protected Map<String, Object> parameters;
 	
 	protected WorkflowObject() {
 		super();
@@ -19,7 +20,14 @@ public class WorkflowObject implements Cloneable {
 		this.status = WorkflowStatus.PENDING;
 		this.next = new HashMap<Long, WorkflowObject>();
 		this.uniqueID = WorkflowManager.getNextUniqueID();
+		this.parameters = new HashMap<String, Object>();
 		
+	}
+	
+	protected WorkflowObject(Map<String, Object> parameters) {
+		this();
+		
+		this.parameters = new HashMap<String,Object>(parameters);
 	}
 	
 	public long getUniqueID() {
@@ -52,5 +60,21 @@ public class WorkflowObject implements Cloneable {
 	
 	public WorkflowStatus getStatus() {
 		return this.status;
+	}
+	
+	public void setParameter(String key, Object value) {
+		parameters.put(key, value);
+	}
+
+	public void setParameters(Map<String, Object> parameters) {
+		this.parameters.putAll(parameters);
+	}
+
+	public Object removeParameter(String key) {
+		return parameters.remove(key);
+	}
+
+	public Object getParameter(String key) {
+		return parameters.get(key);
 	}
 }

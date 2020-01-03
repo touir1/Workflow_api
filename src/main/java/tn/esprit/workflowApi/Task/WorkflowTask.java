@@ -1,6 +1,5 @@
 package tn.esprit.workflowApi.Task;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import tn.esprit.workflowApi.WorkflowObject;
@@ -9,59 +8,45 @@ import tn.esprit.workflowApi.Result.WorkflowTaskResult;
 public abstract class WorkflowTask extends WorkflowTaskObject {
 
 	private WorkflowTask instance = this;
-	private Map<String, Object> parameters;
 	private WorkflowObject onSuccessObject;
 	private WorkflowObject onFailureObject;
 
 	public WorkflowTask() {
 		super();
 
-		this.parameters = new HashMap<String, Object>();
+	}
+	
+	protected WorkflowTask(Map<String, Object> parameters) {
+		super(parameters);
+		
 	}
 
 	@Override
 	public WorkflowTask clone() {
-		WorkflowTask clone = new WorkflowTask() {
+		WorkflowTask clone = new WorkflowTask(this.parameters) {
 
 			@Override
-			public WorkflowTaskResult execute(WorkflowTaskResult lastResult) throws Exception {
-				return instance.execute(lastResult);
+			public WorkflowTaskResult execute(WorkflowTaskResult lastResult, WorkflowTaskObject self) throws Exception {
+				return instance.execute(lastResult, self);
 			}
 
 			@Override
-			public void onSuccess(WorkflowTaskResult result) throws Exception {
-				instance.onSuccess(result);
+			public void onSuccess(WorkflowTaskResult result, WorkflowTaskObject self) throws Exception {
+				instance.onSuccess(result, self);
 
 			}
 
 			@Override
-			public void onFailure(WorkflowTaskResult result) throws Exception {
-				instance.onFailure(result);
+			public void onFailure(WorkflowTaskResult result, WorkflowTaskObject self) throws Exception {
+				instance.onFailure(result, self);
 
 			}
 
 		};
-		clone.setParameters(new HashMap<String,Object>(this.parameters));
 		clone.setOnSuccessObject(this.onSuccessObject);
 		clone.setOnFailureObject(this.onFailureObject);
 
 		return clone;
-	}
-
-	public void setParameter(String key, Object value) {
-		parameters.put(key, value);
-	}
-
-	public void setParameters(Map<String, Object> parameters) {
-		this.parameters.putAll(parameters);
-	}
-
-	public Object removeParameter(String key) {
-		return parameters.remove(key);
-	}
-
-	public Object getParameter(String key) {
-		return parameters.get(key);
 	}
 
 	public WorkflowObject getOnSuccessObject() {

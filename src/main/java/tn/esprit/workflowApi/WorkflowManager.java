@@ -53,7 +53,7 @@ public class WorkflowManager {
 					public void run() {
 						WorkflowTaskResult res = null;
 						try {
-							res = task.execute(lastResult);
+							res = task.execute(lastResult, task);
 						} catch (Exception e) {
 							res = new WorkflowTaskResult(WorkflowStatus.FAILURE, null);
 							res.setMessage(e.getMessage());
@@ -80,7 +80,7 @@ public class WorkflowManager {
 
 				if (result.getStatus().equals(WorkflowStatus.SUCCESS)) {
 					Log.info("task " + task.getUniqueID() + " finished with status: " + result.getStatus());
-					task.onSuccess(result);
+					task.onSuccess(result, task);
 					for (WorkflowObject n : next) {
 						if (n instanceof WorkflowOperation) {
 							executeOperation((WorkflowOperation) n, task, result);
@@ -91,7 +91,7 @@ public class WorkflowManager {
 				} else {
 					Log.error("task " + task.getUniqueID() + " finished with status: " + result.getStatus());
 					if(result.getMessage() != null) Log.error("error message: "+result.getMessage());
-					task.onFailure(result);
+					task.onFailure(result, task);
 
 					for (WorkflowObject n : next) {
 						if (n instanceof WorkflowOperationOR) {
@@ -108,7 +108,7 @@ public class WorkflowManager {
 				Log.error("task " + task.getUniqueID() + " encountered a problem while running.");
 				Log.error("error message: "+e.getMessage());
 				
-				task.onFailure(errorResult);
+				task.onFailure(errorResult, task);
 			}
 
 		}
@@ -242,7 +242,7 @@ public class WorkflowManager {
 				op.setStatus(WorkflowStatus.SUCCESS);
 				op.setResult(result);
 
-				if(op.condition(result)) {
+				if(op.condition(result,op)) {
 					for (WorkflowObject n : operation.getNextList()) {
 						if (n instanceof WorkflowOperation) {
 							executeOperation((WorkflowOperation) n, op, op.getResult());

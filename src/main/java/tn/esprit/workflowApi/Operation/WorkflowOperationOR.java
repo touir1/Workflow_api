@@ -1,6 +1,7 @@
 package tn.esprit.workflowApi.Operation;
 
 import java.util.Arrays;
+import java.util.Map;
 
 import tn.esprit.workflowApi.WorkflowObject;
 import tn.esprit.workflowApi.WorkflowStatus;
@@ -9,6 +10,13 @@ public class WorkflowOperationOR extends WorkflowOperation {
 
 	public WorkflowOperationOR(WorkflowObject object1, WorkflowObject object2) {
 		super();
+		
+		this.setFirst(object1);
+		this.setSecond(object2);
+	}
+	
+	protected WorkflowOperationOR(WorkflowObject object1, WorkflowObject object2, Map<String, Object> parameters) {
+		super(parameters);
 		
 		this.setFirst(object1);
 		this.setSecond(object2);
@@ -25,7 +33,7 @@ public class WorkflowOperationOR extends WorkflowOperation {
 	
 	@Override
 	public WorkflowOperationAND clone() {
-		return new WorkflowOperationAND(this.getFirst(), this.getSecond());
+		return new WorkflowOperationAND(this.getFirst(), this.getSecond(), this.parameters);
 	}
 	
 	@Override

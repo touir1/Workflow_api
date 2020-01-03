@@ -41,19 +41,19 @@ public class WorkflowTest {
 		WorkflowTask task = new WorkflowTask() {
 			
 			@Override
-			public void onSuccess(WorkflowTaskResult result) {
+			public void onSuccess(WorkflowTaskResult result, WorkflowTaskObject self) {
 				System.out.println("on success");
 				
 			}
 			
 			@Override
-			public void onFailure(WorkflowTaskResult result) {
+			public void onFailure(WorkflowTaskResult result, WorkflowTaskObject self) {
 				System.out.println("on failure");
 				
 			}
 			
 			@Override
-			public WorkflowTaskResult execute(WorkflowTaskResult lastResult) throws Exception {
+			public WorkflowTaskResult execute(WorkflowTaskResult lastResult, WorkflowTaskObject self) throws Exception {
 				System.out.println("executing task: "+ this.getUniqueID());
 				//throw new Exception();
 				WorkflowTaskResult result = new WorkflowTaskResult();
@@ -72,7 +72,7 @@ public class WorkflowTest {
 		WorkflowTask task2 = new WorkflowTask() {
 
 			@Override
-			public WorkflowTaskResult execute(WorkflowTaskResult lastResult) throws Exception {
+			public WorkflowTaskResult execute(WorkflowTaskResult lastResult, WorkflowTaskObject self) throws Exception {
 				
 				//System.out.println("last result");
 				if(lastResult == null || lastResult.getData() == null) System.out.println("no data found");
@@ -91,14 +91,14 @@ public class WorkflowTest {
 			}
 
 			@Override
-			public void onSuccess(WorkflowTaskResult result) throws Exception {
+			public void onSuccess(WorkflowTaskResult result, WorkflowTaskObject self) throws Exception {
 				System.out.println("on success "+this.getUniqueID());
 				System.out.println("data: " + result.getData().get(0));
 				
 			}
 
 			@Override
-			public void onFailure(WorkflowTaskResult result) throws Exception {
+			public void onFailure(WorkflowTaskResult result, WorkflowTaskObject self) throws Exception {
 				System.out.println("on failure "+this.getUniqueID());
 				
 			}
